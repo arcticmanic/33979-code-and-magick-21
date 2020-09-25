@@ -10,22 +10,24 @@ const COATS = [`rgb(101, 137, 164)`, `rgb(241, 43, 107)`, `rgb(146, 100, 161)`, 
 
 const EYES = [`black`, `red`, `blue`, `yellow`, `green`];
 
+const QUANTITY = 4;
+
 const wizards = [];
 
-const getRandomIntInclusive = function (min, max) {
+const getRandomIntInRange = function (min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
 const getRandomItem = function (arr) {
-  let randomElement = getRandomIntInclusive(0, arr.length - 1);
+  let randomElement = getRandomIntInRange(0, arr.length - 1);
   let randomElementItem = arr[randomElement];
   return randomElementItem;
 };
 
 const getRandomItemNoRepeat = function (arr) {
-  let randomElement = getRandomIntInclusive(0, arr.length - 1);
+  let randomElement = getRandomIntInRange(0, arr.length - 1);
   let randomElementItem = arr[randomElement];
   arr.splice(randomElement, 1);
   return randomElementItem;
@@ -47,7 +49,7 @@ const populateWizards = function (arr, quantity) {
   }
 };
 
-populateWizards(wizards, 4);
+populateWizards(wizards, QUANTITY);
 
 // Template
 
