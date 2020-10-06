@@ -8,6 +8,10 @@ const COATS = [`rgb(101, 137, 164)`, `rgb(241, 43, 107)`, `rgb(146, 100, 161)`, 
 const EYES = [`black`, `red`, `blue`, `yellow`, `green`];
 const FIREBALLS = [`#ee4830`, `#30a8ee`, `#5ce6c0`, `#e848d5`, `#e6e848`];
 const QUANTITY = 4;
+const KEY_ENTER = `Enter`;
+const KEY_ESCAPE = `Escape`;
+const MIN_NAME_LENGTH = 2;
+const MAX_NAME_LENGTH = 25;
 const wizards = [];
 
 const getRandomIntInRange = function (min, max) {
@@ -92,7 +96,7 @@ const closePopup = function () {
 };
 
 const onPopupEscPress = function (evt) {
-  if (evt.key === `Escape` && (document.activeElement !== setupUsername)) {
+  if (evt.key === KEY_ESCAPE && (document.activeElement !== setupUsername)) {
     evt.preventDefault();
     closePopup();
   }
@@ -103,7 +107,7 @@ setupOpen.addEventListener(`click`, function () {
 });
 
 setupOpen.addEventListener(`keydown`, function (evt) {
-  if (evt.key === `Enter`) {
+  if (evt.key === KEY_ENTER) {
     openPopup();
   }
 });
@@ -113,7 +117,7 @@ setupClose.addEventListener(`click`, function () {
 });
 
 setupClose.addEventListener(`keydown`, function (evt) {
-  if (evt.key === `Enter`) {
+  if (evt.key === KEY_ENTER) {
     closePopup();
   }
 });
@@ -136,9 +140,6 @@ setupEyes.addEventListener(`click`, setupInputColorHandler(setupEyesInput, EYES)
 setupFireball.addEventListener(`click`, setupInputColorHandler(setupFireballInput, FIREBALLS, true));
 
 // Validation
-
-const MIN_NAME_LENGTH = 2;
-const MAX_NAME_LENGTH = 25;
 
 setupUsername.addEventListener(`invalid`, function () {
   if (setupUsername.validity.valueMissing) {
