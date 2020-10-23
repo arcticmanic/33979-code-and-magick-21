@@ -2,7 +2,7 @@
 
 (function () {
   const userDialog = document.querySelector(`.setup`);
-  userDialog.querySelector(`.setup-similar`).classList.remove(`hidden`);
+  const setupForm = userDialog.querySelector(`.setup-wizard-form`);
   const setupOpen = document.querySelector(`.setup-open`);
   const setupClose = userDialog.querySelector(`.setup-close`);
   const setupUsername = userDialog.querySelector(`.setup-user-name`);
@@ -86,6 +86,28 @@
       setupUsername.setCustomValidity(``);
     }
   });
+
+  const submitSuccessHandler = function () {
+    userDialog.classList.add(`hidden`);
+  };
+
+  const submitErrorHandler = function (errorMessage) {
+    let node = document.createElement(`div`);
+    node.style = `z-index: 100; margin: 0 auto; text-align: center; background-color: red;`;
+    node.style.position = `absolute`;
+    node.style.left = 0;
+    node.style.right = 0;
+    node.style.fontSize = `30px`;
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement(`afterbegin`, node);
+  };
+
+  const submitHandler = function (evt) {
+    evt.preventDefault();
+    window.backend.save(new FormData(setupForm), submitSuccessHandler, submitErrorHandler);
+  };
+
+  setupForm.addEventListener(`submit`, submitHandler);
 
   window.setup = {
     userDialog,
