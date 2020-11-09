@@ -1,42 +1,56 @@
 'use strict';
 
 (function () {
-  const IS_DATA_MOCK = false;
-  const similarListElement = window.setup.userDialog.querySelector(`.setup-similar-list`);
-  const similarWizardTemplate = document.querySelector(`#similar-wizard-template`).content.querySelector(`.setup-similar-item`);
+  let wizards = [];
+  let coatColor = `rgb(101, 137, 164)`;
+  let eyesColor = `black`;
 
-  const getMockWizards = function (quantity) {
-    let arr = [];
-    for (let i = 0; i < quantity; i++) {
-      arr.push({
-        name: window.util.getRandomUsername(window.data.NAMES, window.data.SURNAMES),
-        colorCoat: window.util.getRandomItem(window.data.COATS),
-        colorEyes: window.util.getRandomItem(window.data.EYES),
-        colorFireball: window.util.getRandomItem(window.data.FIREBALLS)
-      });
+  const getRank = function (wizard) {
+    let rank = 0;
+
+    if (wizard.colorCoat === coatColor) {
+      rank += 2;
     }
-    return arr;
-  };
-
-  const renderWizard = function (wizard) {
-    let wizardElement = similarWizardTemplate.cloneNode(true);
-    wizardElement.querySelector(`.setup-similar-label`).textContent = wizard.name;
-    wizardElement.querySelector(`.wizard-coat`).style.fill = wizard.colorCoat;
-    wizardElement.querySelector(`.wizard-eyes`).style.fill = wizard.colorEyes;
-    return wizardElement;
-  };
-
-  const renderAllWizards = function (wizards) {
-    const fragment = document.createDocumentFragment();
-    for (let i = 0; i < window.data.QUANTITY; i++) {
-      fragment.appendChild(renderWizard(window.util.getRandomItemNoRepeat(wizards)));
+    if (wizard.colorEyes === eyesColor) {
+      rank += 1;
     }
-    similarListElement.appendChild(fragment);
-    window.setup.userDialog.querySelector(`.setup-similar`).classList.remove(`hidden`);
+
+    return rank;
   };
 
-  const successHandler = function (wizards) {
-    renderAllWizards(wizards);
+  const namesComparator = function (left, right) {
+    if (left > right) {
+      return 1;
+    } else if (left < right) {
+      return -1;
+    } else {
+      return 0;
+    }
+  };
+
+  const updateWizards = function () {
+    window.render(wizards.sort(function (left, right) {
+      let rankDiff = getRank(right) - getRank(left);
+      if (rankDiff === 0) {
+        rankDiff = namesComparator(left.name, right.name);
+      }
+      return rankDiff;
+    }));
+  };
+
+  window.wizard.setEyesChangeHandler(window.debounce(function (color) {
+    eyesColor = color;
+    updateWizards();
+  }));
+
+  window.wizard.setCoatChangeHandler(window.debounce(function (color) {
+    coatColor = color;
+    updateWizards();
+  }));
+
+  const successHandler = function (data) {
+    wizards = data;
+    updateWizards();
   };
 
   const errorHandler = function (errorMessage) {
@@ -51,9 +65,11 @@
     document.body.insertAdjacentElement(`afterbegin`, node);
   };
 
-  if (IS_DATA_MOCK) {
-    renderAllWizards(getMockWizards(window.data.QUANTITY));
-  } else {
-    window.backend.load(successHandler, errorHandler);
-  }
+  window.backend.load(successHandler, errorHandler);
+
+  window.wizards = {
+    coatColor,
+    eyesColor,
+    updateWizards
+  };
 }());
